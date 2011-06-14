@@ -34,6 +34,7 @@ class LogActionBehavior extends ModelBehavior {
  */
 	function setup(&$Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
+			// Set default settings to class variable
 			$this->settings[$Model->alias] = array(
 				'authSession' => 'Auth',
 				'userModel' => 'User',
@@ -41,8 +42,11 @@ class LogActionBehavior extends ModelBehavior {
 				'fields' => array()
 			);
 		}
+
+		// Merge default settings with custom settings
 		$this->settings[$Model->alias] = array_merge($this->settings[$Model->alias], $settings);
 
+		// Set blank default values for changed fields
 		$this->_changes[$Model->alias] = array(
 			'before' => array(),
 			'after' => array(),
@@ -62,7 +66,6 @@ class LogActionBehavior extends ModelBehavior {
  */
 	function beforeSave(&$Model) {
 		$this->settings[$Model->alias]['row'] = $Model->id;
-		pr($Model->data);
 
 		if (!$this->settings[$Model->alias]['fields']) {
 			// No fields to monitor
@@ -93,15 +96,17 @@ class LogActionBehavior extends ModelBehavior {
 			$this->_changes[$Model->alias]['before'] = $oldData[$Model->alias];
 		}
 
+		// Check if any values have changed
 		foreach ($this->_changes[$Model->alias]['after'] as $field => $newValue) {
 			$oldValue = isset($this->_changes[$Model->alias]['before'][$field]) ? $this->_changes[$Model->alias]['before'][$field] : false;
 			if ($newValue == $oldValue) {
-				// Values have not changed
+				// Values have not changed. Remove them from the arrays.
 				unset($this->_changes[$Model->alias]['before'][$field]);
 				unset($this->_changes[$Model->alias]['after'][$field]);
 			}
 		}
 
+		// Determine if any field has changed
 		$this->_changes[$Model->alias]['hasChanges'] = (bool) $this->_changes[$Model->alias]['before'];
 
 		return true;
@@ -120,7 +125,8 @@ class LogActionBehavior extends ModelBehavior {
  */
 	function afterSave(&$Model, $created) {
 		if ($this->_changes[$Model->alias]['hasChanges']) {
-			$logAction = ClassRegistry::init('LogAction');
+			// Initial class for LogAction table
+			$logAction = ClassRegistry::init('LogAction.LogAction');
 
 			foreach ($this->_changes[$Model->alias]['before'] as $field => $oldValue) {
 				$newValue = $this->_changes[$Model->alias]['after'][$field];
@@ -135,6 +141,7 @@ class LogActionBehavior extends ModelBehavior {
 					'after' => $newValue
 				);
 				if (!$logAction->insert($data)) {
+					// Failed to insert log record
 					return false;
 				}
 			}

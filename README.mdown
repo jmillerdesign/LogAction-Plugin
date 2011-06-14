@@ -12,9 +12,11 @@ Installation
 1) Run the .sql script or use `cake schema update` to create the database table log_actions.
 
     cake schema update -plugin log_action
+
 or
 
     mysql -uroot database_table < app/plugins/log_action/config/sql/log_actions.sql
+
 
 2) Add the behavior to the model(s) you want to monitor, and specify the fields to monitor
 

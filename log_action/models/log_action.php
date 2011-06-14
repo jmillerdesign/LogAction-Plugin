@@ -7,7 +7,7 @@
  * @author Justin Miller
  * @version 1
  */
-class LogAction extends AppModel {
+class LogAction extends LogActionAppModel {
 /**
  * Name of the model.
  *

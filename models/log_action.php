@@ -5,7 +5,7 @@
  * Used with LogAction Behavior to log when changes to the database occurs.
  *
  * @author Justin Miller
- * @version 1
+ * @version 3
  */
 class LogAction extends LogActionAppModel {
 /**

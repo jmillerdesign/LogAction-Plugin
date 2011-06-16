@@ -1,7 +1,7 @@
 LogAction CakePHP Plugin
 =============
 
-Version 2, by _J. Miller_
+Version 3, by _J. Miller_
 
 This will monitor specified fields in your database for changes.
 It will log the before and after values of changes, as well as the user_id that made the change.
@@ -18,11 +18,12 @@ or
     mysql -uroot database_table < app/plugins/log_action/config/schema/log_actions_mysql.sql
 
 
-2) Add the behavior to the model(s) you want to monitor, and specify the fields to monitor
+2) Add the behavior to the model(s) you want to monitor, and specify the fields to monitor.
 
 	var $actsAs = array(
 		'LogAction.LogAction' => array(
-			'fields' => array('title', 'body')
+			'fields' => array('title', 'body'),
+			'trackDelete' => true
 		)
 	);
 
@@ -30,6 +31,5 @@ or
 TODO
 ----
 
-* Monitor when rows are deleted
 * Add UI for viewing logs
 * Add support for AppModel, to monitor all fields in all tables, or specified fields on all tables

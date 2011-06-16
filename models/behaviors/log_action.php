@@ -6,7 +6,7 @@
  * REQUIRES model log_action.php
  *
  * @author Justin Miller
- * @version 1
+ * @version 3
  */
 class LogActionBehavior extends ModelBehavior {
 
@@ -27,6 +27,7 @@ class LogActionBehavior extends ModelBehavior {
  * - userModel: (string) The name of the User model. DEFAULTS TO: 'User'
  * - row: (integer) The row id currently being modified. DEFAULTS TO: 0
  * - fields: (array) List of fields to monitor. DEFAULTS TO: none
+ * - trackDelete: (boolean) True if row deletions should be monitored. DEFAULTS TO: true
  *
  * @param object $Model Model using the behavior
  * @param array $settings Settings to override for model.
@@ -39,12 +40,28 @@ class LogActionBehavior extends ModelBehavior {
 				'authSession' => 'Auth',
 				'userModel' => 'User',
 				'row' => 0,
-				'fields' => array()
+				'fields' => array(),
+				'trackDelete' => true
 			);
 		}
 
 		// Merge default settings with custom settings
 		$this->settings[$Model->alias] = array_merge($this->settings[$Model->alias], $settings);
+
+		if ($this->settings[$Model->alias]['trackDelete']) {
+			// Track deletions
+
+			// Track SoftDeletable behavior
+			// @link http://github.com/evilbloodydemon/cakephp-softdeletable2
+			if (in_array('SoftDeletable', $Model->actsAs)) {
+				// Make sure 'deleted' field is being monitored
+				// beforeDelete & afterDelete are not called if using SoftDeletable
+				$softDeletableField = (!empty($Model->actsAs['SoftDeletable']['field'])) ? $Model->actsAs['SoftDeletable']['field'] : 'deleted';
+				if ($Model->hasField($softDeletableField) && !in_array($softDeletableField, $this->settings[$Model->alias]['fields'])) {
+					$this->settings[$Model->alias]['fields'][] = $softDeletableField;
+				}
+			}
+		}
 
 		// Set blank default values for changed fields
 		$this->_changes[$Model->alias] = array(
@@ -144,6 +161,29 @@ class LogActionBehavior extends ModelBehavior {
 					// Failed to insert log record
 					return false;
 				}
+			}
+		}
+
+		return true;
+	}
+
+	function beforeDelete(&$Model, $cascade = true) {
+	}
+
+	function afterDelete(&$Model) {
+		if ($this->settings[$Model->alias]['trackDelete']) {
+			// Insert record of this deletion
+			$data = array(
+				'user_id' => $this->getUserId($Model),
+				'row' => $Model->id,
+				'model' => $Model->alias,
+				'field' => 'deleted',
+				'before' => 0,
+				'after' => 1
+			);
+			if (!ClassRegistry::init('LogAction.LogAction')->insert($data)) {
+				// Failed to insert log record
+				return false;
 			}
 		}
 

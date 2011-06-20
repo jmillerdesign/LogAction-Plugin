@@ -1,7 +1,7 @@
 LogAction CakePHP Plugin
 =============
 
-Version 3, by _J. Miller_
+Version 4, by _J. Miller_
 
 This will monitor specified fields in your database for changes.
 It will log the before and after values of changes, as well as the user_id that made the change.
@@ -28,8 +28,9 @@ or
 	);
 
 
+3) Admin accessible at: /admin/log_action/logs
+
 TODO
 ----
 
-* Add UI for viewing logs
 * Add support for AppModel, to monitor all fields in all tables, or specified fields on all tables

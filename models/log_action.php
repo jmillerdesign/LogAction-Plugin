@@ -5,7 +5,6 @@
  * Used with LogAction Behavior to log when changes to the database occurs.
  *
  * @author Justin Miller
- * @version 3
  */
 class LogAction extends LogActionAppModel {
 /**
@@ -16,6 +15,8 @@ class LogAction extends LogActionAppModel {
  * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
  */
 	var $name = 'LogAction';
+
+	var $belongsTo = 'User';
 
 /**
  * Insert a new record into the database

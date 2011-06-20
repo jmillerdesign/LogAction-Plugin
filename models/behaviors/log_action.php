@@ -6,7 +6,6 @@
  * REQUIRES model log_action.php
  *
  * @author Justin Miller
- * @version 3
  */
 class LogActionBehavior extends ModelBehavior {
 
@@ -25,8 +24,7 @@ class LogActionBehavior extends ModelBehavior {
  *
  * - authSession: (string) The name of the Auth session key. DEFAULTS TO: 'Auth'
  * - userModel: (string) The name of the User model. DEFAULTS TO: 'User'
- * - row: (integer) The row id currently being modified. DEFAULTS TO: 0
- * - fields: (array) List of fields to monitor. DEFAULTS TO: none
+ * - fields: (array) List of fields to monitor. DEFAULTS TO: none,
  * - trackDelete: (boolean) True if row deletions should be monitored. DEFAULTS TO: true
  *
  * @param object $Model Model using the behavior
@@ -39,7 +37,6 @@ class LogActionBehavior extends ModelBehavior {
 			$this->settings[$Model->alias] = array(
 				'authSession' => 'Auth',
 				'userModel' => 'User',
-				'row' => 0,
 				'fields' => array(),
 				'trackDelete' => true
 			);
@@ -82,8 +79,6 @@ class LogActionBehavior extends ModelBehavior {
  * @access public
  */
 	function beforeSave(&$Model) {
-		$this->settings[$Model->alias]['row'] = $Model->id;
-
 		if (!$this->settings[$Model->alias]['fields']) {
 			// No fields to monitor
 			return true;
@@ -111,6 +106,12 @@ class LogActionBehavior extends ModelBehavior {
 
 		if ($oldData) {
 			$this->_changes[$Model->alias]['before'] = $oldData[$Model->alias];
+		} else {
+			// Creating a new entry
+			// Make before match after, but with empty values
+			foreach ($this->_changes[$Model->alias]['after'] as $key => $value) {
+				$this->_changes[$Model->alias]['before'][$key] = '';
+			}
 		}
 
 		// Check if any values have changed
@@ -132,9 +133,6 @@ class LogActionBehavior extends ModelBehavior {
 /**
  * After save method. Called after all saves
  *
- * Overriden to transparently manage setting the lft and rght fields if and only if the parent field is included in the
- * parameters to be saved.
- *
  * @param AppModel $Model Model instance.
  * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
@@ -151,7 +149,7 @@ class LogActionBehavior extends ModelBehavior {
 				// Insert record of this change
 				$data = array(
 					'user_id' => $this->getUserId($Model),
-					'row' => $this->settings[$Model->alias]['row'],
+					'row' => $Model->id,
 					'model' => $Model->alias,
 					'field' => $field,
 					'before' => $oldValue,

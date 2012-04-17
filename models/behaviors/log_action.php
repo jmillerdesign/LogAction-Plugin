@@ -196,9 +196,12 @@ class LogActionBehavior extends ModelBehavior {
  * @access private
  */
 	private function getUserId(&$Model) {
-		$AuthSession = $this->settings[$Model->alias]['authSession'];
-		$UserSession = $this->settings[$Model->alias]['userModel'];
-		return Set::extract($_SESSION, $AuthSession . '.' . $UserSession . '.' . 'id');
+		if (empty($_SESSION)) {
+			return 0;
+		}
+		$authSession = $this->settings[$Model->alias]['authSession'];
+		$userSession = $this->settings[$Model->alias]['userModel'];
+		return Set::extract($_SESSION, $authSession . '.' . $userSession . '.' . 'id');
 	}
 
 }

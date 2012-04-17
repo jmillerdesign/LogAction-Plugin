@@ -1,7 +1,7 @@
 LogAction CakePHP Plugin
 =============
 
-Version 4, by _J. Miller_
+Version 5, by _J. Miller_
 
 This will monitor specified fields in your database for changes.
 It will log the before and after values of changes, as well as the user_id that made the change.

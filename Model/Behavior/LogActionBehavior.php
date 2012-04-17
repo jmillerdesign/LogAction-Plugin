@@ -125,7 +125,7 @@ class LogActionBehavior extends ModelBehavior {
 		}
 
 		// Determine if any field has changed
-		$this->_changes[$Model->alias]['hasChanges'] = (bool) $this->_changes[$Model->alias]['before'];
+		$this->_changes[$Model->alias]['hasChanges'] = (boolean) $this->_changes[$Model->alias]['before'];
 
 		return true;
 	}
@@ -196,9 +196,12 @@ class LogActionBehavior extends ModelBehavior {
  * @access private
  */
 	private function getUserId(&$Model) {
-		$AuthSession = $this->settings[$Model->alias]['authSession'];
-		$UserSession = $this->settings[$Model->alias]['userModel'];
-		return Set::extract($_SESSION, $AuthSession . '.' . $UserSession . '.' . 'id');
+		if (empty($_SESSION)) {
+			return 0;
+		}
+		$authSession = $this->settings[$Model->alias]['authSession'];
+		$userSession = $this->settings[$Model->alias]['userModel'];
+		return (integer) Set::extract($_SESSION, $authSession . '.' . $userSession . '.' . 'id');
 	}
 
 }

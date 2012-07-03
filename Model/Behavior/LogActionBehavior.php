@@ -192,7 +192,7 @@ class LogActionBehavior extends ModelBehavior {
  * Extract the User.id of the currently logged in user from their Session
  *
  * @param AppModel $Model Model instance
- * @return integer id of current User
+ * @return string id of current User
  * @access private
  */
 	private function getUserId(&$Model) {
@@ -201,7 +201,8 @@ class LogActionBehavior extends ModelBehavior {
 		}
 		$authSession = $this->settings[$Model->alias]['authSession'];
 		$userSession = $this->settings[$Model->alias]['userModel'];
-		return (integer) Set::extract($_SESSION, $authSession . '.' . $userSession . '.' . 'id');
+		$user = Hash::extract($_SESSION, $authSession . '.' . $userSession);
+		return (string) $user['id'];
 	}
 
 }

@@ -1,6 +1,6 @@
 <h2><?php __('Logs');?></h2>
 
-<?php if ($logs): ?>
+<?php if ($data): ?>
 	<table cellpadding="0" cellspacing="0">
 		<tr>
 			<th><?php echo $this->Paginator->sort('User', 'user_id');?></th>
@@ -12,7 +12,7 @@
 			<th><?php echo $this->Paginator->sort('Date', 'created');?></th>
 		</tr>
 		<?php
-			foreach ($logs as $key => $log):
+			foreach ($data as $key => $log):
 				$class = array();
 				if ($key++ % 2 == 0) {
 					$class[] = 'altrow';
@@ -67,9 +67,9 @@
 <?php else: ?>
 	<p class="empty">
 		<?php if ($userId): ?>
-			No logs have been recorded for this user.
+			No data have been recorded for this user.
 		<?php else: ?>
-			No logs have been recorded.
+			No data have been recorded.
 		<?php endif; ?>
 	</p>
 <?php endif; ?>

@@ -26,7 +26,8 @@ or
 			'trackDelete' => true
 		)
 	);
-
+	
+If you will remove `fields` key, behavior will add all fields exclude cols from $_ignore_fields.
 
 3) Admin accessible at: /admin/log_action/logs
 

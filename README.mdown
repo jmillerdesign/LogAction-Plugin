@@ -1,7 +1,7 @@
 LogAction CakePHP Plugin
 =============
 
-Version 5, by _J. Miller_
+Version 6, by [J. Miller](http://github.com/jmillerdesign)
 
 This will monitor specified fields in your database for changes.
 It will log the before and after values of changes, as well as the user_id that made the change.
@@ -14,17 +14,18 @@ Installation
     cake schema create --plugin LogAction
 
 
-2) Add the behavior to the model(s) you want to monitor, and specify the fields to monitor.
+2) Load the plugin in Config/bootstrap.php
 
-	var $actsAs = array(
+	CakePlugin::load('LogAction');
+
+3) Add the behavior to the model(s) you want to monitor, and specify the fields to monitor.
+
+	public $actsAs = array(
 		'LogAction.LogAction' => array(
 			'fields' => array('title', 'body'),
-			'trackDelete' => true
+			'trackDelete' => false
 		)
 	);
-
-
-3) Admin accessible at: /admin/log_action/logs
 
 TODO
 ----

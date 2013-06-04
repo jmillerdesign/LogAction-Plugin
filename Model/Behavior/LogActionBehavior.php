@@ -1,9 +1,10 @@
 <?php
+App::uses('AuthComponent', 'Controller/Component');
+
 /**
  * LogAction Behavior
  *
  * Will monitor specified fields for changes and log them to the database
- * REQUIRES model log_action.php
  *
  * @author Justin Miller
  */
@@ -15,7 +16,7 @@ class LogActionBehavior extends ModelBehavior {
  * @var array
  * @access protected
  */
-	var $_changes = array();
+	protected $_changes = array();
 
 /**
  * Initiate behavior for the model using specified settings.
@@ -27,17 +28,17 @@ class LogActionBehavior extends ModelBehavior {
  * - fields: (array) List of fields to monitor. DEFAULTS TO: none,
  * - trackDelete: (boolean) True if row deletions should be monitored. DEFAULTS TO: true
  *
- * @param object $Model Model using the behavior
+ * @param Model $Model Model using the behavior
  * @param array $settings Settings to override for model.
  * @access public
  */
-	function setup(&$Model, $settings = array()) {
+	public function setup(&$Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
 			// Set default settings to class variable
 			$this->settings[$Model->alias] = array(
 				'authSession' => 'Auth',
-				'userModel' => 'User',
-				'fields' => array(),
+				'userModel'   => 'User',
+				'fields'      => array(),
 				'trackDelete' => true
 			);
 		}
@@ -62,8 +63,8 @@ class LogActionBehavior extends ModelBehavior {
 
 		// Set blank default values for changed fields
 		$this->_changes[$Model->alias] = array(
-			'before' => array(),
-			'after' => array(),
+			'before'     => array(),
+			'after'      => array(),
 			'hasChanges' => false
 		);
 	}
@@ -74,11 +75,11 @@ class LogActionBehavior extends ModelBehavior {
  * Monitors data that is about to be saved. Will read existing data from the database,
  * and if changes have occurred, will set them in the 'changes' key
  *
- * @param AppModel $Model Model instance
+ * @param Model $Model Model instance
  * @return boolean true to continue, false to abort the save
  * @access public
  */
-	function beforeSave(&$Model) {
+	public function beforeSave(&$Model) {
 		if (!$this->settings[$Model->alias]['fields']) {
 			// No fields to monitor
 			return true;
@@ -133,12 +134,12 @@ class LogActionBehavior extends ModelBehavior {
 /**
  * After save method. Called after all saves
  *
- * @param AppModel $Model Model instance.
+ * @param Model $Model Model instance.
  * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
  * @access public
  */
-	function afterSave(&$Model, $created) {
+	public function afterSave(&$Model, $created) {
 		if ($this->_changes[$Model->alias]['hasChanges']) {
 			// Initial class for LogAction table
 			$logAction = ClassRegistry::init('LogAction.LogAction');
@@ -148,12 +149,12 @@ class LogActionBehavior extends ModelBehavior {
 
 				// Insert record of this change
 				$data = array(
-					'user_id' => $this->getUserId($Model),
-					'row' => $Model->id,
-					'model' => $Model->alias,
-					'field' => $field,
-					'before' => $oldValue,
-					'after' => $newValue
+					'user_id' => AuthComponent::user('id'),
+					'row'     => $Model->id,
+					'model'   => $Model->alias,
+					'field'   => $field,
+					'before'  => $oldValue,
+					'after'   => $newValue
 				);
 				if (!$logAction->insert($data)) {
 					// Failed to insert log record
@@ -165,19 +166,33 @@ class LogActionBehavior extends ModelBehavior {
 		return true;
 	}
 
-	function beforeDelete(&$Model, $cascade = true) {
-	}
+/**
+ * Called before every deletion operation.
+ *
+ * @param Model $Model Model instance.
+ * @param boolean $cascade If true records that depend on this record will also be deleted
+ * @return boolean True if the operation should continue, false if it should abort
+ * @access public
+ */
+	public function beforeDelete(&$Model, $cascade = true) {}
 
-	function afterDelete(&$Model) {
+/**
+ * Called after every deletion operation.
+ *
+ * @param Model $Model Model instance.
+ * @return void
+ * @access public
+ */
+	public function afterDelete(&$Model) {
 		if ($this->settings[$Model->alias]['trackDelete']) {
 			// Insert record of this deletion
 			$data = array(
-				'user_id' => $this->getUserId($Model),
-				'row' => $Model->id,
-				'model' => $Model->alias,
-				'field' => 'deleted',
-				'before' => 0,
-				'after' => 1
+				'user_id' => AuthComponent::user('id'),
+				'row'     => $Model->id,
+				'model'   => $Model->alias,
+				'field'   => 'deleted',
+				'before'  => 0,
+				'after'   => 1
 			);
 			if (!ClassRegistry::init('LogAction.LogAction')->insert($data)) {
 				// Failed to insert log record
@@ -186,23 +201,6 @@ class LogActionBehavior extends ModelBehavior {
 		}
 
 		return true;
-	}
-
-/**
- * Extract the User.id of the currently logged in user from their Session
- *
- * @param AppModel $Model Model instance
- * @return string id of current User
- * @access private
- */
-	private function getUserId(&$Model) {
-		if (empty($_SESSION)) {
-			return 0;
-		}
-		$authSession = $this->settings[$Model->alias]['authSession'];
-		$userSession = $this->settings[$Model->alias]['userModel'];
-		$user = Set::extract($_SESSION, $authSession . '.' . $userSession);
-		return (string) $user['id'];
 	}
 
 }

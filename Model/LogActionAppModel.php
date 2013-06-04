@@ -1,5 +1,2 @@
 <?php
-
-class LogActionAppModel extends AppModel {
-
-}
+class LogActionAppModel extends AppModel {}

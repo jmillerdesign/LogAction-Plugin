@@ -9,13 +9,9 @@ It will log the before and after values of changes, as well as the user_id that 
 Installation
 ------------
 
-1) Run the .sql script or use `cake schema update` to create the database table log_actions.
+1) Run the following command to create the database table log_actions.
 
-    cake schema update -plugin log_action
-
-or
-
-    mysql -uroot database_table < app/plugins/log_action/config/schema/log_actions_mysql.sql
+    cake schema create --plugin LogAction
 
 
 2) Add the behavior to the model(s) you want to monitor, and specify the fields to monitor.

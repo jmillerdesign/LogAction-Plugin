@@ -204,10 +204,10 @@ class LogActionBehavior extends ModelBehavior {
 	}
 
 /**
- * Allow changes to be publicly accessable
+ * Allow changes to be publicly accessible
  *
  * @param Model $Model Model instance.
- * @return array changes that were saved
+ * @return array Changes that were made
  * @access public
  */
 	public function getChanges($Model) {

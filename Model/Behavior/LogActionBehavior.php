@@ -203,4 +203,15 @@ class LogActionBehavior extends ModelBehavior {
 		return true;
 	}
 
+/**
+ * Allow changes to be publicly accessible
+ *
+ * @param Model $Model Model instance.
+ * @return array Changes that were made
+ * @access public
+ */
+	public function getChanges($Model) {
+		return $this->_changes[$Model];
+	}
+
 }

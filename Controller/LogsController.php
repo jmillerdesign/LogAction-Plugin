@@ -12,7 +12,7 @@ class LogsController extends LogActionAppController {
 		}
 		$this->paginate = array(
 			'conditions' => $conditions,
-			'order' => 'LogAction.id DESC',
+			'order' => 'LogAction.created DESC',
 			'limit' => 25
 		);
 		$this->set('logs', $this->paginate());

@@ -140,13 +140,16 @@ class LogActionBehavior extends ModelBehavior {
  * @access public
  */
 	public function afterSave(&$Model, $created) {
-        if ($this->_changes[$Model->alias]['hasChanges']) {
+		if ($this->_changes[$Model->alias]['hasChanges']) {
 			// Initial class for LogAction table
 			$logAction = ClassRegistry::init('LogAction.LogAction');
 
 
 			foreach ($this->_changes[$Model->alias]['before'] as $field => $oldValue) {
-                if( !isset($this->_changes[$Model->alias]['after'][$field])) continue;
+				if (!array_key_exists($field, $this->_changes[$Model->alias]['after'])) {
+					continue;
+				}
+
 				$newValue = $this->_changes[$Model->alias]['after'][$field];
 
 				// Insert record of this change

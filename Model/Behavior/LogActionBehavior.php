@@ -79,7 +79,7 @@ class LogActionBehavior extends ModelBehavior {
  * @return boolean true to continue, false to abort the save
  * @access public
  */
-	public function beforeSave(Model $model) {
+	public function beforeSave(Model $model, $options=>array()) {
 		if (!$this->settings[$model->alias]['fields']) {
 			// No fields to monitor
 			return true;
@@ -139,7 +139,7 @@ class LogActionBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @access public
  */
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options=>array()) {
 		if ($this->_changes[$model->alias]['hasChanges']) {
 			// Initial class for LogAction table
 			$logAction = ClassRegistry::init('LogAction.LogAction');

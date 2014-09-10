@@ -96,16 +96,15 @@ class LogActionBehavior extends ModelBehavior {
 	}
 
 /**
- * Before save method. Called before all saves
+ * beforeSave is called before a model is saved. Returning false from a beforeSave callback
+ * will abort the save operation.
  *
- * Monitors data that is about to be saved. Will read existing data from the database,
- * and if changes have occurred, will set them in the 'changes' key
- *
- * @param Model $model Model instance
- * @return boolean true to continue, false to abort the save
- * @access public
+ * @param Model $model Model using this behavior
+ * @param array $options Options passed from Model::save().
+ * @return mixed False if the operation should abort. Any other result will continue.
+ * @see Model::save()
  */
-	public function beforeSave(Model $model) {
+	public function beforeSave(Model $model, $options = array()) {
 		if (!$this->settings[$model->alias]['fields']) {
 			// No fields to monitor
 			return true;
@@ -158,14 +157,15 @@ class LogActionBehavior extends ModelBehavior {
 	}
 
 /**
- * After save method. Called after all saves
+ * afterSave is called after a model is saved.
  *
- * @param Model $model Model instance.
- * @param boolean $created indicates whether the node just saved was created or updated
- * @return boolean true on success, false on failure
- * @access public
+ * @param Model $model Model using this behavior
+ * @param bool $created True if this save created a new record
+ * @param array $options Options passed from Model::save().
+ * @return bool
+ * @see Model::save()
  */
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		if ($this->_changes[$model->alias]['hasChanges']) {
 			// Initial class for LogAction table
 			$logAction = ClassRegistry::init('LogAction.LogAction');

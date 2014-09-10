@@ -15,7 +15,7 @@ class LogsController extends LogActionAppController {
 			'order' => 'LogAction.created DESC',
 			'limit' => 25
 		);
-		$this->set('logs', $this->paginate());
+		$this->set('data', $this->paginate());
 		$this->set('userId', $userId);
 	}
 

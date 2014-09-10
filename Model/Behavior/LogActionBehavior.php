@@ -19,6 +19,22 @@ class LogActionBehavior extends ModelBehavior {
 	protected $_changes = array();
 
 /**
+ * Models to ignore
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_ignore_models = array('LogAction', 'Aro', 'Aco', 'AroAcos');
+
+/**
+ * Global fields to ignore
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_ignore_fields = array('id', 'lft', 'rght');
+
+/**
  * Initiate behavior for the model using specified settings.
  *
  * Available settings:
@@ -41,6 +57,16 @@ class LogActionBehavior extends ModelBehavior {
 				'fields'      => array(),
 				'trackDelete' => true
 			);
+		}
+
+		// Automatically track all fields (by github.com/michalg)
+		if (empty($settings['fields']) and !in_array($Model->alias, $this->_ignore_models)) {
+			$settings['fields'] = array_keys($Model->schema());
+			foreach ($settings['fields'] as $i => $col) {
+				if (in_array($col, $this->_ignore_fields)) {
+					unset($settings['fields'][$i]);
+				}
+			}
 		}
 
 		// Merge default settings with custom settings

@@ -60,8 +60,8 @@ class LogActionBehavior extends ModelBehavior {
 		}
 
 		// Automatically track all fields (by github.com/michalg)
-		if (empty($settings['fields']) and !in_array($Model->alias, $this->_ignore_models)) {
-			$settings['fields'] = array_keys($Model->schema());
+		if (empty($settings['fields']) and !in_array($model->alias, $this->_ignore_models)) {
+			$settings['fields'] = array_keys($model->schema());
 			foreach ($settings['fields'] as $i => $col) {
 				if (in_array($col, $this->_ignore_fields)) {
 					unset($settings['fields'][$i]);

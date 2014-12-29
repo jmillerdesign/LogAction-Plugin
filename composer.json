@@ -1,0 +1,27 @@
+
+{
+    "name": "jmillerdesign/logaction",
+    "type": "cakephp-plugin",
+    "description": "CakePHP plugin to monitor changes to the database made by a user.",
+    "keywords": [
+        "cakephp",
+        "logaction",
+        "log",
+        "logs"
+    ],
+    "homepage": "https://github.com/jmillerdesign/LogAction-Plugin/",
+    "authors": [
+        {
+            "name": "J. Miller",
+            "email": "j@jmillerdesign.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/jmillerdesign/LogAction-Plugin/issues",
+        "source": "https://github.com/jmillerdesign/LogAction-Plugin"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "composer/installers": "*"
+    }
+}

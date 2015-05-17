@@ -1,6 +1,6 @@
 
 {
-    "name": "jmillerdesign/logaction",
+    "name": "jmillerdesign/log_action",
     "type": "cakephp-plugin",
     "description": "CakePHP plugin to monitor changes to the database made by a user.",
     "keywords": [
